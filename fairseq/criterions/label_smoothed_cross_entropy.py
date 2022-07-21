@@ -97,6 +97,8 @@ class LabelSmoothedCrossEntropyCriterion(FairseqCriterion):
     def get_lprobs_and_target(self, model, net_output, sample):
         lprobs = model.get_normalized_probs(net_output, log_probs=True)
         target = model.get_targets(sample, net_output)
+        # lprobs.shape, target.shape
+        # T x B x |V|, T x B
         if self.ignore_prefix_size > 0:
             if getattr(lprobs, "batch_first", False):
                 lprobs = lprobs[:, self.ignore_prefix_size :, :].contiguous()
@@ -104,10 +106,12 @@ class LabelSmoothedCrossEntropyCriterion(FairseqCriterion):
             else:
                 lprobs = lprobs[self.ignore_prefix_size :, :, :].contiguous()
                 target = target[self.ignore_prefix_size :, :].contiguous()
+        # (T x B) x |V|, (T x B)
         return lprobs.view(-1, lprobs.size(-1)), target.view(-1)
 
     def compute_loss(self, model, net_output, sample, reduce=True):
         lprobs, target = self.get_lprobs_and_target(model, net_output, sample)
+        # (T x B) x |V|, (T x B)
         loss, nll_loss = label_smoothed_nll_loss(
             lprobs,
             target,
