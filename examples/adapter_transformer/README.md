@@ -6,7 +6,7 @@ These parameters should be set differently depending on the training data:
 * `--language-classifier-one-vs-rest`: if non-zero, language classification will be binary (this class vs the rest) 
 * `--actual-vocab-size`: vocabulary size, excluding language tags
 
-Before training, please replace `trainer.py` by `trainer_adv.py`.
+Before training, please replace `$FAIRSEQ_DIR/fairseq/trainer.py` by `$FAIRSEQ_DIR/fairseq/trainer_adv.py`.
 The differences to `train.py` are:
 * It builds a separate optimizer for the adversarial classifier.
 * It scales num_updates, so that the optimizer schedules are unaffected by the additional steps from the alternating training.
