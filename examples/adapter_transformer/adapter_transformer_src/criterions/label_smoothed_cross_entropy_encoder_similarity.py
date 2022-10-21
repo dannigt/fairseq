@@ -109,7 +109,7 @@ class EncoderSimilarityLabelSmoothedCrossEntropyCriterion(
             "ntokens": sample["ntokens"] + ntokens_src,
             "nsentences": sample["target"].size(0) * 2,
             "sample_size": sample_size,
-            "similarity_loss": sim_loss.data,
+            "similarity_loss": sim_loss.item(),
         }
 
         if self.report_accuracy:    # TODO: make this for both directions too

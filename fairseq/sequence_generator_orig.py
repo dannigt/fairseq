@@ -247,21 +247,8 @@ class SequenceGenerator(nn.Module):
         # placeholder of indices for bsz * beam_size to hold tokens and accumulative scores
         new_order = torch.arange(bsz).view(-1, 1).repeat(1, beam_size).view(-1)
         new_order = new_order.to(src_tokens.device).long()
-
-        for k in encoder_outs[0]:
-            try:
-                print(k, encoder_outs[0][k].shape)
-                encoder_outs[0][k] = [encoder_outs[0][k]]
-            except Exception:
-                try:
-                    print(k, encoder_outs[0][k][0].shape)
-                except Exception:
-                    print("NOT TENSOR", k)
-        print("=====")
         encoder_outs = self.model.reorder_encoder_out(encoder_outs, new_order)
-
         # ensure encoder_outs is a List.
-        encoder_outs_orig = [o for o in encoder_outs]
         assert encoder_outs is not None
 
         # initialize buffers
@@ -563,7 +550,7 @@ class SequenceGenerator(nn.Module):
             finalized[sent] = torch.jit.annotate(
                 List[Dict[str, Tensor]], finalized[sent]
             )
-        return finalized, encoder_outs_orig
+        return finalized
 
     def _prefix_tokens(
         self, step: int, lprobs, scores, tokens, prefix_tokens, beam_size: int
